@@ -21,20 +21,21 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping(value = "/students", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> createStudent(@RequestBody Student student) {
+    public ResponseEntity<String> createStudent(@RequestBody Student student) {
         Student savedStudent = studentService.save(student);
 
         // Generate QR code
-        byte[] qrCodeImage = QRCodeGenerator.generateQRCode(savedStudent.toString(), 200, 200);
+        byte[] qrCodeImage = QRCodeGenerator.generateQRCode(savedStudent, 200, 200);
 
         // Generate PDF
-        byte[] pdfDocument = PDFGenerator.generatePDF(savedStudent, qrCodeImage);
+        String pdfDocument = PDFGenerator.generatePDF(savedStudent, qrCodeImage);
+
 
 
 
         // Save QR code and PDF to storage
         // You need to implement the storage part here
 
-        return new ResponseEntity<>(new ByteArrayResource(pdfDocument),HttpStatus.OK);
+        return new ResponseEntity<>(pdfDocument,HttpStatus.OK);
     }
 }
